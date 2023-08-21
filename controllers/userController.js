@@ -1,3 +1,6 @@
+const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+
 const getDashboardPage = async (req, res) => {
     try {
         res.status(200).render('dashboard');
@@ -11,7 +14,6 @@ const getDashboardPage = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
-        console.log('11');
         
         const { name, email, password, password2 } = req.body;
         let errors = [];
@@ -31,6 +33,8 @@ const createUser = async (req, res) => {
             errors.push({ msg: 'Password should be at least 6 characters' });
         }
 
+
+
         if (errors.length > 0) {
             res.render('register', {
                 errors,
@@ -40,7 +44,48 @@ const createUser = async (req, res) => {
                 password2
             });
         } else {
-            res.send('pass');
+            const user = await User.findOne({email : email});
+            if(user){
+                // User exists
+                errors.push({msg : 'Email already is exists.'})
+                res.render('register', {
+                    errors,
+                    name,
+                    email,
+                    password,
+                    password2
+                });
+            } else {
+                const newUser = new User({
+                    name,
+                    email,
+                    password
+                });
+                console.log(newUser);
+                
+
+                // hash password
+                bcrypt.genSalt(10, (err, salt)=> 
+                bcrypt.hash(newUser.password, salt, (err, hash)=>{
+                    if(err){
+                        return res.status(400).redirect('/redirect');
+                    }
+
+                    newUser.password = hash;
+                    newUser.save()
+                    .then(user =>{
+                        res.redirect('/login');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(400).redirect('/register');
+                    });
+                    
+
+                }));
+                
+
+            }
         }
 
 

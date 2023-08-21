@@ -1,15 +1,25 @@
 const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
+const mongoose = require('mongoose');
 
 
 const pageRoute = require('./routes/pageRoute');
-//const userRoute = require('./routes/userRoute');
+const userRoute = require('./routes/userRoute');
 
 
 const app = express();
 
 
 // CONNECT MONGODB
+mongoose.connect('mongodb://localhost/passportdb', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Database Connection Succesful');
+}).catch((err) => {
+    console.log(err);
+})
+
 
 
 // MIDDLEWARES
@@ -24,7 +34,7 @@ app.set('view engine', 'ejs');
 
 // ROUTES
 app.use('/', pageRoute.routes);
-//app.use('/users', userRoute.routes);
+app.use('/users', userRoute.routes);
 
 
 

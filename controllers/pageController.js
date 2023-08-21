@@ -42,11 +42,25 @@ const getRegisterPage = async (req, res) =>{
     }
 }
 
+const getDashboardPage = async (req, res) =>{
+    try {
+        res.status(200).render('dashboard');
+        
+    } catch (error) {
+        res.status(400).json({
+            status: 'fail',
+            error
+
+        })
+    }
+}
+
 
 
 module.exports = {
     getHomePage,
     getLoginPage,
-    getRegisterPage
+    getRegisterPage,
+    getDashboardPage
     
 }

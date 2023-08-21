@@ -10,6 +10,7 @@ router.get('/login',pageController.getLoginPage);
 router.get('/register',pageController.getRegisterPage);
 
 
+
 module.exports = {
     routes:router
 }
